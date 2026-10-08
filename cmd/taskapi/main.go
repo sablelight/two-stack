@@ -141,13 +141,17 @@ func getEnv(key, def string) string {
 
 func healthHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
+	if err := json.NewEncoder(w).Encode(map[string]string{"status": "ok"}); err != nil {
+		log.Printf("encode failed: %v", err)
+	}
 }
 
 func listTasks(w http.ResponseWriter, r *http.Request) {
 	tasks := store.List()
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]any{"tasks": tasks})
+	if err := json.NewEncoder(w).Encode(map[string]any{"tasks": tasks}); err != nil {
+		log.Printf("encode failed: %v", err)
+	}
 }
 
 func createTask(w http.ResponseWriter, r *http.Request) {
@@ -166,7 +170,9 @@ func createTask(w http.ResponseWriter, r *http.Request) {
 	task := store.Create(req.Title, req.Description)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(task)
+	if err := json.NewEncoder(w).Encode(task); err != nil {
+		log.Printf("encode failed: %v", err)
+	}
 }
 
 func taskByID(w http.ResponseWriter, r *http.Request) {
@@ -185,7 +191,9 @@ func taskByID(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(task)
+		if err := json.NewEncoder(w).Encode(task); err != nil {
+			log.Printf("encode failed: %v", err)
+		}
 
 	case http.MethodPatch:
 		updateTask(w, r)
@@ -235,7 +243,9 @@ func updateTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(task)
+	if err := json.NewEncoder(w).Encode(task); err != nil {
+		log.Printf("encode failed: %v", err)
+	}
 }
 
 func deleteTask(w http.ResponseWriter, r *http.Request) {
